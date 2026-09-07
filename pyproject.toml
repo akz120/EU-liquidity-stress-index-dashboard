@@ -8,6 +8,7 @@ authors = [
 ]
 requires-python = ">=3.13"
 dependencies = [
+    "ecbdata>=0.1.1",
     "ipykernel>=7.3.0",
     "matplotlib>=3.11.1",
     "pandas>=3.0.5",
