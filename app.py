@@ -233,12 +233,50 @@ elif page == "4. Model Architecture":
 
     st.markdown("---")
 
+    # NEW SECTION: Input Variables Breakdown Grid
+    st.markdown("#### Model Input Pillars (The 4 Variables)")
+    p1, p2, p3, p4 = st.columns(4)
+
+    with p1:
+        st.markdown("**1. Excess Reserves (\(ER\))**")
+        st.caption("""
+        * **Source:** ECB Eurosystem Balance Sheet
+        * **Unit:** € Billions
+        * **Role:** Primary cash buffer for bank clearing. *(Inverted in model)*
+        """)
+
+    with p2:
+        st.markdown("**2. Overnight Short Rate (\(SR\))**")
+        st.caption("""
+        * **Source:** ECB (€STR / Spliced EONIA)
+        * **Unit:** Percentage (%)
+        * **Role:** Wholesale interbank overnight borrowing cost benchmark.
+        """)
+
+    with p3:
+        st.markdown("**3. 10Y Sovereign Yield (\(GY\))**")
+        st.caption("""
+        * **Source:** German Bund 10Y Benchmark
+        * **Unit:** Percentage (%)
+        * **Role:** Term premium & sovereign risk discount rate.
+        """)
+
+    with p4:
+        st.markdown("**4. Loan-to-Deposit Ratio (\(LTD\))**")
+        st.caption("""
+        * **Source:** Eurozone Banking Aggregates
+        * **Unit:** Ratio (%)
+        * **Role:** Commercial credit expansion vs. sticky deposit funding.
+        """)
+
+    st.markdown("---")
+
     col_math1, col_math2 = st.columns(2)
 
     with col_math1:
         st.markdown("#### 12-Month Rolling Normalization")
         st.markdown(
-            "Transforms non-stationary $I(1)$ variables relative to prevailing 12m localized market volatility:"
+            "Transforms non-stationary \(I(1)\) variables relative to prevailing 12m localized market volatility:"
         )
         st.latex(r"Z_{i, t} = \frac{X_{i, t} - \mu_{i, 12m}}{\sigma_{i, 12m}}")
         st.caption("*(Excess Reserves are inverted: lower reserves = higher stress).*")
@@ -246,7 +284,7 @@ elif page == "4. Model Architecture":
     with col_math2:
         st.markdown("#### Equal-Weighted Composite & CDF Mapping")
         st.markdown(
-            "Aggregates equal-weighted Z-scores into a composite score, mapped onto a bounded 0 to 100 risk scale via Normal CDF $\Phi(\cdot)$:"
+            "Aggregates equal-weighted Z-scores into a composite score, mapped onto a bounded 0 to 100 risk scale via Normal CDF \(\Phi(\cdot)\):"
         )
         st.latex(r"\text{ELSI}_t = \Phi\left(\frac{Z_{ER} + Z_{SR} + Z_{GY} + Z_{LTD}}{4}\right) \times 100")
 
@@ -264,7 +302,7 @@ elif page == "4. Model Architecture":
         st.info("🟠 **50 – 75: Tightening**\n\nElevated funding friction.")
     with t_col4:
         st.error("🔴 **75 – 100: Stress**\n\nAcute liquidity squeeze.")
-
+        
 elif page == "5. Live ELSI Dashboard":
     st.subheader("Eurozone Liquidity Stress Trajectory (2004–2026)")
 
