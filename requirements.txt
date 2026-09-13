@@ -1,5 +1,0 @@
-streamlit
-pandas
-numpy
-scipy
-plotly>=5.0.0
