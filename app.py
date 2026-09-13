@@ -6,11 +6,12 @@ import plotly.graph_objects as go
 from scipy.stats import norm
 import streamlit as st
 
-#page configuration
+# Page configuration
 st.set_page_config(
     page_title="ELSI Early-Warning Framework",
     page_icon="🏦",
     layout="wide",
+    initial_sidebar_state="expanded"
 )
 
 #sidebar navigation
