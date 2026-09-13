@@ -14,9 +14,7 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-st.markdown("""
-    
-""", unsafe_allow_html=True)
+st.markdown("", unsafe_allow_html=True)
 
 #sidebar navigation
 st.sidebar.title("Navigation")
