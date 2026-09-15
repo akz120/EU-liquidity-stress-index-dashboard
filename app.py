@@ -132,7 +132,8 @@ if page == "1. Executive Summary":
     #adding citation footer
     st.markdown("---")
     st.caption(
-        "**Data Sources & Lineage:** Underlying macro time-series (2004–2026) sourced from the European Central Bank (ECB) Statistical Data Warehouse and Eurosystem Monetary Statistics. Data processed, normalized, and transformed via SciPy (`scipy.stats.norm`) and Pandas."
+        "**Data Sources & Lineage:** Ingested via the official **ECB Data Portal API** (`https://data-api.ecb.europa.eu/service/data`). "
+        "Key series: Excess Reserves (`ILM`), €STR/EONIA (`EST`/`FM`), 10Y Sovereign Yields (`YC`), and BSI Loans/Deposits (`BSI`)."
     )
 
 elif page == "2. Macro Theory Timeline":
