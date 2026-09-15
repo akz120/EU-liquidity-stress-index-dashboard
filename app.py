@@ -30,6 +30,10 @@ page = st.sidebar.radio(
     ],
 )
 
+st.sidebar.markdown("---")
+st.sidebar.markdown("**Developed by:** Alma Zhantleuova")
+st.sidebar.markdown("Ex-National Bank Analyst | Treasury & Financial Risk Analyst")
+st.sidebar.markdown("[LinkedIn Profile](https://www.linkedin.com/in/alma-zhantleuova/)")
 
 #loading the data - framework A to get historical data for 22 years
 @st.cache_data
