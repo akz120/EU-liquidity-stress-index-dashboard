@@ -129,6 +129,12 @@ if page == "1. Executive Summary":
         "**Bottom Line for Risk Desks:** ELSI acts as an early-warning radar—signaling when to transition from yield optimization to precautionary cash preservation before market tightening turns expensive."
     )
 
+    #adding citation footer
+    st.markdown("---")
+    st.caption(
+        "**Data Sources & Lineage:** Underlying macro time-series (2004–2026) sourced from the European Central Bank (ECB) Statistical Data Warehouse and Eurosystem Monetary Statistics. Data processed, normalized, and transformed via SciPy (`scipy.stats.norm`) and Pandas."
+    )
+
 elif page == "2. Macro Theory Timeline":
     st.title("Macroeconomic Theory & Policy Regimes (2004–2026)")
     st.caption("Evolution of Eurosystem Liquidity Frameworks & Central Bank Operational Regimes")
