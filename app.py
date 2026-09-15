@@ -101,7 +101,7 @@ if page == "1. Executive Summary":
     )
 
     st.markdown("---")
-    st.markdown("### ⚖️ The Commercial Treasury Trade-off")
+    st.markdown("### The Commercial Treasury Trade-off")
 
     #side-by-side comparison card
     col_under, col_over = st.columns(2)
@@ -147,7 +147,7 @@ elif page == "2. Macro Theory Timeline":
         """)
 
     with col2:
-        st.warning("⚡ **2. Crisis Management & FRFA (2008–2014)**")
+        st.warning(" **2. Crisis Management & FRFA (2008–2014)**")
         st.markdown("""
         * **Regime:** Fixed-Rate Full Allotment (FRFA).
         * **Operational Target:** Post-GFC & Sovereign Debt Crisis response.
@@ -210,7 +210,7 @@ elif page == "3. Benchmark Splicing":
 
     st.markdown("---")
 
-    st.subheader("📐 The Official ECB Splicing Equation")
+    st.subheader("The Official ECB Splicing Equation")
     st.markdown(
         "To construct a seamless 22-year historical time series (2004–2026), EONIA is bridged to €STR using the ECB's official fixed spread adjustment of **$-8.5\\text{ bps}$** ($-0.085\\%$):"
     )
@@ -469,7 +469,7 @@ elif page == "6. Stress Simulator & Pillar Inspector":
     baseline_score = latest["ELSI_Score"]
 
     with col_inputs:
-        st.markdown("### 🎛️ 2. Custom Shock Parameters")
+        st.markdown("### 2. Custom Shock Parameters")
 
         #excess reserves 
         delta_er_billions = st.slider(
@@ -523,7 +523,7 @@ elif page == "6. Stress Simulator & Pillar Inspector":
     sim_elsi_score = norm.cdf(composite_z_sim) * 100.0
 
     with col_results:
-        st.markdown("### 📊 3. Simulated Market Impact")
+        st.markdown("### 3. Simulated Market Impact")
 
         st.metric(
             label="Simulated ELSI Stress Score",
