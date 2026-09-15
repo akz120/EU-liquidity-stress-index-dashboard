@@ -78,6 +78,7 @@ def load_and_process_data():
         else:
             return "🟢 Normal"
 
+
     df["Risk_Level"] = df["ELSI_Score"].apply(get_tier)
     return df.dropna(subset=["ELSI_Score"])
 
@@ -158,7 +159,7 @@ elif page == "2. Macro Theory Timeline":
         """)
 
     with col2:
-        st.warning(" **2. Crisis Management & FRFA (2008–2014)**")
+        st.warning("**2. Crisis Management & FRFA (2008–2014)**")
         st.markdown("""
         * **Regime:** Fixed-Rate Full Allotment (FRFA).
         * **Operational Target:** Post-GFC & Sovereign Debt Crisis response.
@@ -227,10 +228,10 @@ elif page == "3. Benchmark Splicing":
     )
 
     st.latex(r"""
-    \text{Rate}_{\text{Unified}, t} = 
-    \begin{cases} 
+    \text{Rate}_{\text{Unified}, t} =
+    \begin{cases}
     \text{EONIA}_t - 0.085\% & \text{for } t < \text{October 2019} \\[6pt]
-    \text{€STR}_t & \text{for } t \ge \text{October 2019} 
+    \text{€STR}_t & \text{for } t \ge \text{October 2019}
     \end{cases}
     """)
 
@@ -316,7 +317,7 @@ elif page == "4. Model Architecture":
         st.info("🟠 **50 – 75: Tightening**\n\nElevated funding friction.")
     with t_col4:
         st.error("🔴 **75 – 100: Stress**\n\nAcute liquidity squeeze.")
-        
+
 elif page == "5. Live ELSI Dashboard":
     st.subheader("Eurozone Liquidity Stress Trajectory (2004–2026)")
 
@@ -385,8 +386,8 @@ elif page == "5. Live ELSI Dashboard":
         "2022-07-01": "2022 Rate Hike Cycle (+450bps)",
         "2023-03-01": "2023 SVB / CS Stress & QT",
     }
-    
-    #event lines and annotations only if within the filtered date range 
+
+    #event lines and annotations only if within the filtered date range
     min_date = filtered_df.index.min()
     max_date = filtered_df.index.max()
 
@@ -469,7 +470,7 @@ elif page == "6. Stress Simulator & Pillar Inspector":
 
     st.markdown("---")
 
-    #interactive sliders for customised stress to be used in the simulator 
+    #interactive sliders for customised stress to be used in the simulator
     col_inputs, col_results = st.columns([1.2, 1.0])
 
     latest = df.iloc[-1]
@@ -482,7 +483,7 @@ elif page == "6. Stress Simulator & Pillar Inspector":
     with col_inputs:
         st.markdown("### 2. Custom Shock Parameters")
 
-        #excess reserves 
+        #excess reserves
         delta_er_billions = st.slider(
             "Central Bank Cash Buffer (Excess Reserves €B)",
             -2000.0, 1000.0, float(st.session_state.p_er), 100.0,
@@ -530,7 +531,28 @@ elif page == "6. Stress Simulator & Pillar Inspector":
     z_gy_sim = (sim_gy - last_12["govt_yield_10y"].mean()) / std_gy
     z_ltd_sim = (sim_ltd - last_12["ltd_ratio_calc"].mean()) / std_ltd
 
-    composite_z_sim = (z_er_sim + z_sr_sim + z_gy_sim + z_ltd_sim) / 4.0
+    # 1. Проверяем, какие именно рычаги были задействованы (было ли реальное изменение)
+# Сравниваем абсолютные дельты с пороговыми значениями чувствительности
+    has_er_shock = abs(delta_er_billions) > 150.0  # Существенный отток резервов (>150 млрд)
+    has_sr_shock = abs(delta_sr * 100.0) > 30.0    # Реальный сдвиг ставки (>30 б.п.)
+    has_gy_shock = abs(delta_gy * 100.0) > 30.0    # Реальный сдвиг доходности облигаций (>30 б.п.)
+    has_ltd_shock = abs(delta_ltd * 100.0) > 0.8   # Ощутимый сдвиг LTD (>0.8%)
+
+# 2. Считаем количество одновременно запущенных шоков
+    active_shocks = sum([has_er_shock, has_sr_shock, has_gy_shock, has_ltd_shock])
+
+# 3. Применяем коэффициент системной синергии на Composite_Z
+# Если сработал только 1 или 2 рычага — это локальное рыночное движение (сглаживаем его эффект)
+# Если сработали 3 или 4 рычага — это фронтальный шок всей системы
+    if active_shocks >= 3:
+        amplification = 1.0    # Системный кризис — полная мощность
+    elif active_shocks == 2:
+        amplification = 0.55   # Коррелированный шок двух рынков
+    else:
+        amplification = 0.25   # Изолированный шум одного параметра (гасим его доминирование)
+
+# 4. Финальный расчет сценарного Composite_Z и ELSI Score
+    composite_z_sim = ((z_er_sim + z_sr_sim + z_gy_sim + z_ltd_sim) / 4.0) * amplification
     sim_elsi_score = norm.cdf(composite_z_sim) * 100.0
 
     with col_results:
@@ -543,7 +565,7 @@ elif page == "6. Stress Simulator & Pillar Inspector":
             delta_color="inverse",
         )
 
-        #interpretation of the results delivered by the simulation 
+        #interpretation of the results delivered by the simulation
         if sim_elsi_score >= 75:
             st.error("🔴 **SYSTEMIC STRESS SIGNAL**")
             st.markdown(
