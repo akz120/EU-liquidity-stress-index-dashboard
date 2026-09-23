@@ -532,10 +532,10 @@ elif page == "6. Stress Simulator & Pillar Inspector":
     z_ltd_sim = (sim_ltd - last_12["ltd_ratio_calc"].mean()) / std_ltd
 
     #determine if each shock is significant enough to be considered a "shock" for the simulation
-    has_er_shock = abs(delta_er_billions) > 150.0  # Существенный отток резервов (>150 млрд)
-    has_sr_shock = abs(delta_sr * 100.0) > 30.0    # Реальный сдвиг ставки (>30 б.п.)
-    has_gy_shock = abs(delta_gy * 100.0) > 30.0    # Реальный сдвиг доходности облигаций (>30 б.п.)
-    has_ltd_shock = abs(delta_ltd * 100.0) > 0.8   # Ощутимый сдвиг LTD (>0.8%)
+    has_er_shock = abs(delta_er_billions) > 150.0  
+    has_sr_shock = abs(delta_sr * 100.0) > 30.0   
+    has_gy_shock = abs(delta_gy * 100.0) > 30.0    
+    has_ltd_shock = abs(delta_ltd * 100.0) > 0.8   
 
 # Count how many shocks are active
     active_shocks = sum([has_er_shock, has_sr_shock, has_gy_shock, has_ltd_shock])
