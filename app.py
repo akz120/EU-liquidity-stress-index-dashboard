@@ -450,23 +450,23 @@ elif page == "6. Stress Simulator & Pillar Inspector":
             st.session_state.p_gy = 0.0
             st.session_state.p_ltd = 0.0
     with sc_col2:
-        if st.button("Rate Hike (+75 bps)"):
-            st.session_state.p_er = -200.0
-            st.session_state.p_sr = 75.0
-            st.session_state.p_gy = 50.0
-            st.session_state.p_ltd = 1.0
-    with sc_col3:
-        if st.button("Aggressive QT (-€1 Trillion)"):
-            st.session_state.p_er = -1000.0
+        if st.button("Moderate Rate Hike (+25 bps)"):
+            st.session_state.p_er = -100.0
             st.session_state.p_sr = 25.0
-            st.session_state.p_gy = 25.0
-            st.session_state.p_ltd = 2.0
+            st.session_state.p_gy = 15.0
+            st.session_state.p_ltd = 0.5
+    with sc_col3:
+        if st.button("Strong Tightening (+50 bps)"):
+            st.session_state.p_er = -400.0
+            st.session_state.p_sr = 50.0
+            st.session_state.p_gy = 35.0
+            st.session_state.p_ltd = 1.5
     with sc_col4:
-        if st.button("Credit Freeze (Severe Shock)"):
-            st.session_state.p_er = -1500.0
-            st.session_state.p_sr = 125.0
-            st.session_state.p_gy = 100.0
-            st.session_state.p_ltd = 10.0
+        if st.button("Severe Liquidity Stress"):
+            st.session_state.p_er = -750.0
+            st.session_state.p_sr = 100.0
+            st.session_state.p_gy = 75.0
+            st.session_state.p_ltd = 4.0
 
     st.markdown("---")
 
@@ -486,21 +486,21 @@ elif page == "6. Stress Simulator & Pillar Inspector":
         #excess reserves 
         delta_er_billions = st.slider(
             "Central Bank Cash Buffer (Excess Reserves €B)",
-            -2000.0, 1000.0, float(st.session_state.p_er), 100.0,
+            -1000.0, 500.0, float(st.session_state.p_er), 25.0,
             help="Simulates ECB Quantitative Tightening (QT). Negative numbers mean cash is draining."
         )
 
         #short rates
         delta_sr = st.slider(
             "Overnight Rate Shift (€STR in basis points)",
-            -100.0, 150.0, float(st.session_state.p_sr), 25.0,
-            help="100 basis points = 1.00% rate hike or cut by the central bank."
+            -100.0, 100.0, float(st.session_state.p_sr), 5.0,
+            help="100 basis points = 1.00% rate change."
         ) / 100.0
 
-        #gov bonds yields
+        # government bond yields
         delta_gy = st.slider(
             "10Y Sovereign Bond Yield Shift (Bunds in bps)",
-            -100.0, 150.0, float(st.session_state.p_gy), 25.0,
+            -100.0, 100.0, float(st.session_state.p_gy), 5.0,
             help="Reflects long-term borrowing costs for governments and corporations."
         ) / 100.0
 
@@ -531,37 +531,8 @@ elif page == "6. Stress Simulator & Pillar Inspector":
     z_gy_sim = (sim_gy - last_12["govt_yield_10y"].mean()) / std_gy
     z_ltd_sim = (sim_ltd - last_12["ltd_ratio_calc"].mean()) / std_ltd
 
-    #determine if each shock is significant enough to be considered a "shock" for the simulation
-    has_er_shock = abs(delta_er_billions) > 150.0  
-    has_sr_shock = abs(delta_sr * 100.0) > 30.0   
-    has_gy_shock = abs(delta_gy * 100.0) > 30.0    
-    has_ltd_shock = abs(delta_ltd * 100.0) > 0.8   
-
-# Count how many shocks are active
-    active_shocks = sum([has_er_shock, has_sr_shock, has_gy_shock, has_ltd_shock])
-
-# Determine amplification factor based on the number of active shocks
-    if active_shocks >= 3:
-        amplification = 1.0    #correlated shock across three or more markets
-    elif active_shocks == 2:
-        amplification = 0.55   #correlated shock across two markets
-    else:
-        amplification = 0.25   #isolated shock in one market
-
-#final simulated ELSI score calculation
-    if (
-        delta_er_billions == 0.0
-        and delta_sr == 0.0
-        and delta_gy == 0.0
-        and delta_ltd == 0.0
-        ):
-        sim_elsi_score = baseline_score
-    else:
-        composite_z_sim = (
-        (z_er_sim + z_sr_sim + z_gy_sim + z_ltd_sim) / 4.0
-        ) * amplification
-
-        sim_elsi_score = norm.cdf(composite_z_sim) * 100.0
+    composite_z_sim = (z_er_sim + z_sr_sim + z_gy_sim + z_ltd_sim) / 4.0
+    sim_elsi_score = norm.cdf(composite_z_sim) * 100.0
 
     with col_results:
         st.markdown("### 3. Simulated Market Impact")
