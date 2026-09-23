@@ -69,11 +69,11 @@ def load_and_process_data():
     def get_tier(score):
         if pd.isna(score):
             return "N/A"
-        elif score >= 75:
+        elif score >= 75:       
             return "🔴 Systemic Stress"
-        elif score >= 50:
+        elif score >= 50:      
             return "🟠 Tightening Alert"
-        elif score >= 25:
+        elif score >= 25:       
             return "🟡 Friction"
         else:
             return "🟢 Normal"
