@@ -549,7 +549,12 @@ elif page == "6. Stress Simulator & Pillar Inspector":
         amplification = 0.25   #isolated shock in one market
 
 #final simulated ELSI score calculation
-    if active_shocks == 0:
+    if (
+        delta_er_billions == 0.0
+        and delta_sr == 0.0
+        and delta_gy == 0.0
+        and delta_ltd == 0.0
+        ):
         sim_elsi_score = baseline_score
     else:
         composite_z_sim = (
