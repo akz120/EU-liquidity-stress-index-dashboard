@@ -36,7 +36,7 @@ st.sidebar.markdown("Ex-National Bank Analyst | Treasury & Financial Risk Analys
 st.sidebar.markdown("[LinkedIn Profile](https://www.linkedin.com/in/alma-zhantleuova/)")
 
 #loading the data - framework A to get historical data for 22 years
-@st.cache_data
+# @st.cache_data
 def load_and_process_data():
     file_name = "ELSI_Framework_A.csv"
     if os.path.exists(file_name):
@@ -49,6 +49,8 @@ def load_and_process_data():
 
     df = pd.read_csv(path, index_col=0, parse_dates=True)
     df.index = pd.to_datetime(df.index)
+
+    original_sample_size = len(df)
 
     #12-month rolling normalization
     window = 12
@@ -80,10 +82,9 @@ def load_and_process_data():
 
 
     df["Risk_Level"] = df["ELSI_Score"].apply(get_tier)
-    return df.dropna(subset=["ELSI_Score"])
+    return df.dropna(subset=["ELSI_Score"]), original_sample_size
 
-
-df = load_and_process_data()
+df, original_sample_size = load_and_process_data()
 
 
 #page content based on selection
@@ -137,7 +138,7 @@ if page == "1. Executive Summary":
     #adding citation footer
     st.markdown("---")
     st.caption(
-        "**Data Sources & Lineage:** Ingested via the official **ECB Data Portal API** (`https://data-api.ecb.europa.eu/service/data`). "
+        "**Data Sources & Lineage:** Data retrieved from the official **ECB Data Portal API** (`https://data-api.ecb.europa.eu/service/data`). "
         "Key series: Excess Reserves (`ILM`), €STR/EONIA (`EST`/`FM`), 10Y Sovereign Yields (`YC`), and BSI Loans/Deposits (`BSI`)."
     )
 
@@ -291,7 +292,7 @@ elif page == "4. Model Architecture":
     with col_math1:
         st.markdown("#### 12-Month Rolling Normalization")
         st.markdown(
-            "Transforms non-stationary \(I(1)\) variables relative to prevailing 12m localized market volatility:"
+            "Applies 12-month rolling Z-score normalization to express each variable as a standardized deviation from its recent local mean, scaled by local volatility:"
         )
         st.latex(r"Z_{i, t} = \frac{X_{i, t} - \mu_{i, 12m}}{\sigma_{i, 12m}}")
         st.caption("*(Excess Reserves are inverted: lower reserves = higher stress).*")
@@ -299,7 +300,7 @@ elif page == "4. Model Architecture":
     with col_math2:
         st.markdown("#### Equal-Weighted Composite & CDF Mapping")
         st.markdown(
-            "Aggregates equal-weighted Z-scores into a composite score, mapped onto a bounded 0 to 100 risk scale via Normal CDF \(\Phi(\cdot)\):"
+            "Combines four standardized pillar scores with equal weights (25% each) into a composite stress signal, then applies the standard normal CDF to map it onto a 0–100 ELSI score:"
         )
         st.latex(r"\text{ELSI}_t = \Phi\left(\frac{Z_{ER} + Z_{SR} + Z_{GY} + Z_{LTD}}{4}\right) \times 100")
 
@@ -352,7 +353,7 @@ elif page == "5. Live ELSI Dashboard":
     with col2:
         st.metric(label="Risk Tier Classification", value=tier_display)
     with col3:
-        st.metric(label="Historical Sample Size", value=f"{len(filtered_df)} Months")
+        st.metric(label="Historical Sample Size", value=f"{original_sample_size} Months")
 
     st.markdown("---")
 
