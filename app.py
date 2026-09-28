@@ -487,28 +487,32 @@ elif page == "6. Stress Simulator & Pillar Inspector":
         #excess reserves 
         delta_er_billions = st.slider(
             "Central Bank Cash Buffer (Excess Reserves €B)",
-            -1000.0, 500.0, float(st.session_state.p_er), 25.0,
+            -1000.0, 500.0, 25.0,
+            key="p_er",
             help="Simulates ECB Quantitative Tightening (QT). Negative numbers mean cash is draining."
         )
 
         #short rates
         delta_sr = st.slider(
             "Overnight Rate Shift (€STR in basis points)",
-            -100.0, 100.0, float(st.session_state.p_sr), 5.0,
+            -100.0, 100.0, 5.0,
+            key="p_sr",
             help="100 basis points = 1.00% rate change."
         ) / 100.0
 
         # government bond yields
         delta_gy = st.slider(
             "10Y Sovereign Bond Yield Shift (Bunds in bps)",
-            -100.0, 100.0, float(st.session_state.p_gy), 5.0,
+            -100.0, 100.0, 5.0,
+            key="p_gy",
             help="Reflects long-term borrowing costs for governments and corporations."
         ) / 100.0
 
         #loan to deposits ratio
         delta_ltd = st.slider(
             "Commercial Bank Loan Squeeze (LTD Ratio %)",
-            -20.0, 20.0, float(st.session_state.p_ltd), 0.5,
+            -20.0, 20.0, 0.5,
+            key="p_ltd",
             help="Higher LTD means banks have loaned out more money relative to their deposits."
         ) / 100.0
 
